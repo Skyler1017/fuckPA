@@ -126,7 +126,17 @@ int print_num(char *buf, unsigned long u, int base, int negFlag,
 }
 
 int printf(const char *fmt, ...) {
-    return 0;
+    va_list ap;
+    va_start(ap, fmt);
+    char out[MAX_BUF];
+    // 填充
+    int len = vsprintf(out, fmt, ap);
+    int i;
+    // 输出
+    for (i = 0; i < len; i++) {
+        _putc(out[i]);
+    }
+    return len;
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
