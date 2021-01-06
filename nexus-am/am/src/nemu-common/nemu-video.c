@@ -28,7 +28,7 @@ size_t __am_video_write(uintptr_t reg, void *buf, size_t size) {
              */
             _DEV_VIDEO_FBCTL_t *ctl = (_DEV_VIDEO_FBCTL_t *) buf;
             int x = ctl->x, y = ctl->y, w = ctl->w, h = ctl->h;
-            uint32_t * fb = (uint32_t * )(uintptr_t)
+            uint32_t *fb = (uint32_t * )(uintptr_t)
             FB_ADDR;
 
             // 像素数据拷贝
@@ -49,7 +49,7 @@ size_t __am_video_write(uintptr_t reg, void *buf, size_t size) {
 void __am_vga_init() {
     int i;
     int size = screen_width() * screen_height();
-    uint32_t * fb = (uint32_t * )(uintptr_t)
+    uint32_t *fb = (uint32_t * )(uintptr_t)
     FB_ADDR;
     for (i = 0; i < size; i++) fb[i] = i;
     draw_sync();
