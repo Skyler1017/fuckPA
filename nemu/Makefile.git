@@ -1,9 +1,9 @@
-STUID = 181220000
-STUNAME = 张三
+STUID = U201714839
+STUNAME = 王慧
 
 # DO NOT modify the following code!!!
 
-GITFLAGS = -q --author='tracer-ics2019 <tracer@njuics.org>' --no-verify --allow-empty
+GITFLAGS = -q --author='wanghui <u201714839@hust.edu.cn>' --no-verify --allow-empty
 
 # prototype: git_commit(msg)
 define git_commit
