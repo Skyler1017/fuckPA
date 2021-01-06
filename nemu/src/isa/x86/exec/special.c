@@ -23,7 +23,7 @@ make_EHelper(inv) {
 
   print_asm("invalid opcode");
 }
-
+// 特色指令，跳过
 make_EHelper(nemu_trap) {
   difftest_skip_ref();
 

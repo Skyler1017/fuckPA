@@ -19,23 +19,29 @@ static inline make_DopHelper(I) {
  * the one above from the view of implementation. So we use another helper
  * function to decode it.
  */
-/* sign immediate */
+// 有符号数
 static inline make_DopHelper(SI) {
-  assert(op->width == 1 || op->width == 4);
+    assert(op->width == 1 || op->width == 4);
 
-  op->type = OP_TYPE_IMM;
+    op->type = OP_TYPE_IMM;
 
-  /* TODO: Use instr_fetch() to read `op->width' bytes of memory
-   * pointed by 'pc'. Interpret the result as a signed immediate,
-   * and assign it to op->simm.
-   *
-   op->simm = ???
-   */
-  TODO();
+    /* TODO: Use instr_fetch() to read `op->width' bytes of memory
+     * pointed by 'pc'. Interpret the result as a signed immediate,
+     * and assign it to op->simm.
+     *
+     op->simm = ???
+     */
+    //读指令
+    s0 = instr_fetch(pc, op->width);
 
-  rtl_li(&op->val, op->simm);
+    //符号拓展
+    rtl_sext(&s0, &s0, op->width);
 
-  print_Dop(op->str, OP_STR_SIZE, "$0x%x", op->simm);
+    op->simm = s0;
+
+    rtl_li(&op->val, op->simm);
+
+    print_Dop(op->str, OP_STR_SIZE, "$0x%x", op->simm);
 }
 
 /* I386 manual does not contain this abbreviation.
