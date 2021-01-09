@@ -9,20 +9,28 @@ void __am_vectrap();
 void __am_vecnull();
 
 _Context* __am_irq_handle(_Context *c) {
-  _Context *next = c;
-  if (user_handler) {
-    _Event ev = {0};
-    switch (c->irq) {
-      default: ev.event = _EVENT_ERROR; break;
+    _Context *next = c;
+    if (user_handler) {
+        _Event ev = {0};
+        switch (c->irq) {
+            case 0x81:
+                ev.event = _EVENT_YIELD;
+                break;
+            case 0x80:
+                ev.event = _EVENT_SYSCALL;
+                break;
+            default:
+                ev.event = _EVENT_ERROR;
+                break;
+        }
+
+        next = user_handler(ev, c);
+        if (next == NULL) {
+            next = c;
+        }
     }
 
-    next = user_handler(ev, c);
-    if (next == NULL) {
-      next = c;
-    }
-  }
-
-  return next;
+    return next;
 }
 
 int _cte_init(_Context*(*handler)(_Event, _Context*)) {
@@ -51,8 +59,8 @@ _Context *_kcontext(_Area stack, void (*entry)(void *), void *arg) {
   return NULL;
 }
 
-void _yield() {
-  asm volatile("int $0x81");
+void _yield() {//printf("here!\n");
+    asm volatile("int $0x81");
 }
 
 int _intr_read() {

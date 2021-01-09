@@ -4,10 +4,10 @@ void raise_intr(uint32_t NO, vaddr_t ret_addr);
 
 make_EHelper(lidt)
         {
-//  cpu.idtr.limit = vaddr_read(id_dest->addr, 2);
-//  cpu.idtr.base = vaddr_read(id_dest->addr + 2, 4);
-//  print_asm_template1(lidt);
-//  print_asm_template1(lidt);
+        cpu.idtr.limit = vaddr_read(id_dest->addr, 2);
+        cpu.idtr.base = vaddr_read(id_dest->addr + 2, 4);
+        print_asm_template1(lidt);
+        print_asm_template1(lidt);
         }
 
 make_EHelper(mov_r2cr)
@@ -52,7 +52,7 @@ make_EHelper(mov_cr2r)
 
 make_EHelper(int) {
     raise_intr(id_dest->val, decinfo.seq_pc);
-    Log("int.....");
+    // Log("int.....");
     print_asm("int %s", id_dest->str);
 
     difftest_skip_dut(1, 2);
@@ -60,12 +60,12 @@ make_EHelper(int) {
 
 make_EHelper(iret)
         {
-//  rtl_pop(&decinfo.jmp_pc);
-//  rtl_pop(&cpu.cs);
-//  rtl_pop(&cpu.eflags.val);
-//
-//  rtl_j(decinfo.jmp_pc);
-//  print_asm("iret");
+        rtl_pop(&decinfo.jmp_pc);
+        rtl_pop(&cpu.cs);
+        rtl_pop(&cpu.eflags.val);
+
+        rtl_j(decinfo.jmp_pc);
+        print_asm("iret");
         }
 
 uint32_t pio_read_l(ioaddr_t);

@@ -22,9 +22,9 @@ int main() {
 
   init_device();
 
-#ifdef HAS_CTE
+//#ifdef HAS_CTE
   init_irq();
-#endif
+//#endif
 
   init_fs();
 
@@ -32,9 +32,12 @@ int main() {
 
   Log("Finish initialization");
 
-#ifdef HAS_CTE
+//#ifdef HAS_CTE
+  printf("执行了\n");
   _yield();
-#endif
+  printf("执行了\n");
 
-  panic("Should not reach here");
+//#endif
+
+//  panic("Should not reach here");
 }
