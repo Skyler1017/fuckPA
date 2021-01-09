@@ -2,13 +2,14 @@
 
 typedef size_t (*ReadFn) (void *buf, size_t offset, size_t len);
 typedef size_t (*WriteFn) (const void *buf, size_t offset, size_t len);
-int fs_open(const char *pathname, int flags, int mode);
-size_t fs_read(int fd, void *buf, size_t len);
-size_t fs_write(int fd, const void *buf, size_t len);
-size_t fs_lseek(int fd, size_t offset, int whence);
+size_t fb_write(const void *buf, size_t offset, size_t len) ;
+size_t fbsync_write(const void *buf, size_t offset, size_t len) ;
 size_t ramdisk_read(void *buf, size_t offset, size_t len);
+size_t ramdisk_write(const void *buf, size_t offset, size_t len) ;
 size_t serial_write(const void *buf, size_t offset, size_t len) ;
-int fs_close(int fd);
+size_t events_read(void *buf, size_t offset, size_t len) ;
+size_t dispinfo_len();
+size_t dispinfo_read(void *buf, size_t offset, size_t len) ;
 typedef struct {
   char *name;
   size_t size;
@@ -36,13 +37,21 @@ static Finfo file_table[] __attribute__((used)) = {
   {"stdout", 0, 0,0, invalid_read, serial_write},
   {"stderr", 0, 0, 0,invalid_read, serial_write},
 #include "files.h"
+  {"/dev/events", 0, 0, 0, events_read, invalid_write},
+  {"/dev/fb", 0, 0, 0, invalid_read, fb_write},
+  {"/dev/fbsync", 0, 0, 0, invalid_read, fbsync_write},
+  {"/proc/dispinfo", 0, 0, 0, dispinfo_read, invalid_write},
 };
 
 #define NR_FILES (sizeof(file_table) / sizeof(file_table[0]))
 
 
 void init_fs() {
-    // TODO: initialize the size of /dev/fb
+    // 初始化
+    int fd = fs_open("/dev/fb", 0, 0);
+    file_table[fd].size = sizeof(uint32_t) * screen_height() * screen_width();
+    fd = fs_open("/proc/dispinfo", 0, 0);
+    file_table[fd].size = dispinfo_len();
 }
 
 int fs_open(const char *pathname, int flags, int mode){
