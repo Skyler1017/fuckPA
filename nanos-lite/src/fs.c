@@ -100,7 +100,7 @@ size_t fs_write(int fd, const void *buf, size_t len){
     assert(w_len >= 0);
 
     size_t length = 0;
-    printf("file: %s write empty,\n",file_table[fd].name);
+//    printf("file: %s write empty,\n",file_table[fd].name);
     if(file_table[fd].write == NULL) {
         length = ramdisk_write(buf, file_table[fd].disk_offset + file_table[fd].open_offset, w_len);
     }else{

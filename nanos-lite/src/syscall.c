@@ -11,7 +11,7 @@ _Context* do_syscall(_Context *c) {
 
   switch (a[0]) {
       case SYS_exit:
-          _halt(0);
+          naive_uload(NULL, "/bin/init");
           return c;
       case SYS_yield :
           _yield();
@@ -32,6 +32,10 @@ _Context* do_syscall(_Context *c) {
           c->GPRx = fs_lseek(a[1], a[2], a[3]);
           break;
       case SYS_brk:
+          c->GPRx = 0;
+          break;
+      case SYS_execve:
+          naive_uload(NULL, "/bin/init");
           c->GPRx = 0;
           break;
     default: panic("Unhandled syscall ID = %d", a[0]);
