@@ -1,14 +1,23 @@
 #include <am.h>
 #include <x86.h>
 
-static _Context* (*user_handler)(_Event, _Context*) = NULL;
+static _Context *(*user_handler)(_Event, _Context *) = NULL;
+
+void __am_get_cur_as(_Context *c);
+
+void __am_switch(_Context *c);
 
 void __am_irq0();
+
 void __am_vecsys();
+
 void __am_vectrap();
+
 void __am_vecnull();
 
-_Context* __am_irq_handle(_Context *c) {
+_Context *__am_irq_handle(_Context *c) {
+    __am_get_cur_as(c);
+
     _Context *next = c;
     if (user_handler) {
         _Event ev = {0};
@@ -29,36 +38,37 @@ _Context* __am_irq_handle(_Context *c) {
             next = c;
         }
     }
-
+    __am_switch(next);
     return next;
 }
 
-int _cte_init(_Context*(*handler)(_Event, _Context*)) {
-  static GateDesc idt[NR_IRQ];
+int _cte_init(_Context *(*handler)(_Event, _Context *)) {
+    static GateDesc idt[NR_IRQ];
 
-  // initialize IDT
-  for (unsigned int i = 0; i < NR_IRQ; i ++) {
-    idt[i] = GATE(STS_TG32, KSEL(SEG_KCODE), __am_vecnull, DPL_KERN);
-  }
+    // initialize IDT
+    for (unsigned int i = 0; i < NR_IRQ; i++) {
+        idt[i] = GATE(STS_TG32, KSEL(SEG_KCODE), __am_vecnull, DPL_KERN);
+    }
 
-  // ----------------------- interrupts ----------------------------
-  idt[32]   = GATE(STS_IG32, KSEL(SEG_KCODE), __am_irq0,   DPL_KERN);
-  // ---------------------- system call ----------------------------
-  idt[0x80] = GATE(STS_TG32, KSEL(SEG_KCODE), __am_vecsys, DPL_USER);
-  idt[0x81] = GATE(STS_TG32, KSEL(SEG_KCODE), __am_vectrap, DPL_KERN);
+    // ----------------------- interrupts ----------------------------
+    idt[32] = GATE(STS_IG32, KSEL(SEG_KCODE), __am_irq0, DPL_KERN);
+    // ---------------------- system call ----------------------------
+    idt[0x80] = GATE(STS_TG32, KSEL(SEG_KCODE), __am_vecsys, DPL_USER);
+    idt[0x81] = GATE(STS_TG32, KSEL(SEG_KCODE), __am_vectrap, DPL_KERN);
 
-  set_idt(idt, sizeof(idt));
+    set_idt(idt, sizeof(idt));
 
-  // register event handler
-  user_handler = handler;
+    // register event handler
+    user_handler = handler;
+    printf("Cte initialized success\n");
 
-  return 0;
+    return 0;
 }
 
 _Context *_kcontext(_Area stack, void (*entry)(void *), void *arg) {
-    _Context *cp = (_Context *)stack.end - 1;
+    _Context *cp = (_Context *) stack.end - 1;
     cp->cs = 8;
-    cp->eip = (uintptr_t)entry;
+    cp->eip = (uintptr_t) entry;
     return cp;
 }
 
@@ -67,7 +77,7 @@ void _yield() {//printf("here!\n");
 }
 
 int _intr_read() {
-  return 0;
+    return 0;
 }
 
 void _intr_write(int enable) {

@@ -11,7 +11,8 @@ _Context* do_syscall(_Context *c) {
 
   switch (a[0]) {
       case SYS_exit:
-          naive_uload(NULL, "/bin/init");
+//          naive_uload(NULL, "/bin/init");
+          _halt(0);
           return c;
       case SYS_yield :
           _yield();
