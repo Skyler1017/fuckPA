@@ -98,9 +98,6 @@ static bool make_token(char *e) {
             if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
                 char *substr_start = e + position;
                 int substr_len = pmatch.rm_eo;
-
-                Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-                    i, rules[i].regex, position, substr_len, substr_len, substr_start);
                 position += substr_len;
 
                 if (substr_len >= 32) {
@@ -123,7 +120,7 @@ static bool make_token(char *e) {
                         tokens[nr_token++].type = rules[i].token_type;
                         break;
                 }
-                Log("tokes type : %d", rules[i].token_type);
+                //Log("tokes type : %d", rules[i].token_type);
                 break;
             }
         }
@@ -257,19 +254,19 @@ int get_main_op(int p, int q) {
         else if (type == TK_RIGHT)
             count--;
     }
-    Log("main op pos %d ", pos);
+//    Log("main op pos %d ", pos);
     return pos;
 }
 
 uint32_t log_invalid_token(int p, int q) {
     printf("Invalid tokens: (%d, %d)\n", p, q);
-    for (; p <= q; ++p) {
-        int type = tokens[p].type;
-        printf("%d: %d,%s", p, type, tokens[p].str);
-        if (type == TK_NUM || type == TK_HEX || type == TK_REG)
-            printf(" - %s", tokens[p].str);
-        printf("\n");
-    }
+//    for (; p <= q; ++p) {
+//        int type = tokens[p].type;
+//        printf("%d: %d,%s", p, type, tokens[p].str);
+//        if (type == TK_NUM || type == TK_HEX || type == TK_REG)
+//            printf(" - %s", tokens[p].str);
+//        printf("\n");
+//    }
     return 0;
 }
 
@@ -282,7 +279,7 @@ uint32_t eval(int p, int q, bool *success) {
         uint32_t val = 0;
         int type = tokens[p].type;
         if (type == TK_NUM || type == TK_HEX) {
-            Log("parse : %s", tokens[p].str);
+//            Log("parse : %s", tokens[p].str);
             return strtoul(tokens[p].str, NULL, 0);
         } else if (type == TK_REG) {
             val = isa_reg_str2val(tokens[p].str + 1, success);
@@ -318,7 +315,7 @@ uint32_t eval(int p, int q, bool *success) {
     if (*success == false) {
         return 0;
     }
-    Log("val1 %u,val2 %u", val1, val2);
+    //Log("val1 %u,val2 %u", val1, val2);
     switch (tokens[pos].type) {
         case TK_ADD:
             val = val1 + val2;
@@ -352,7 +349,7 @@ uint32_t eval(int p, int q, bool *success) {
             printf("Unknown token type: %d\n", tokens[pos].type);
             return *success = false;
     }
-    Log("exec val: %u", val);
+//    Log("exec val: %u", val);
     return val;
 }
 
