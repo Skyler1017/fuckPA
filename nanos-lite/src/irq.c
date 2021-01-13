@@ -1,11 +1,11 @@
 #include "common.h"
 _Context* do_syscall(_Context *c);
+_Context* schedule(_Context *prev);
 
 static _Context* do_event(_Event e, _Context* c) {
   switch (e.event) {
       case _EVENT_YIELD:
-          printf("中断处理\n");
-          return c;
+          return schedule(c);
       case _EVENT_SYSCALL:
 //          printf("syscall\n");
           return do_syscall(c);
